@@ -1,4 +1,4 @@
-package pattni.sahil.solver;
+package pattni.sahil.data;
 
 // Helper class to store word and its frequency
 public class WordEntry {

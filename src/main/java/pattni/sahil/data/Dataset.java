@@ -1,4 +1,4 @@
-package pattni.sahil.solver;
+package pattni.sahil.data;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -25,7 +25,7 @@ public class Dataset {
                 // Populate wordFrequency
                 wordFrequencyList.add(
                         new WordEntry(
-                                values[0].strip(),
+                                values[0].strip().toLowerCase(),
                                 Integer.parseInt(values[1])
                         )
                 );

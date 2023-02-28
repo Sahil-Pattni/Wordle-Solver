@@ -1,5 +1,8 @@
-import pattni.sahil.solver.Dataset;
-import pattni.sahil.solver.WordEntry;
+package pattni.sahil.wordle;
+
+import org.springframework.boot.test.context.SpringBootTest;
+import pattni.sahil.data.Dataset;
+import pattni.sahil.data.WordEntry;
 
 import java.util.ArrayList;
 
@@ -8,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+@SpringBootTest
 public class DatasetTest {
     private static Dataset dataset;
     @BeforeAll
