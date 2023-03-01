@@ -1,8 +1,5 @@
 package pattni.sahil.automator;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.safari.SafariDriver;
 
 import java.time.Duration;
@@ -16,31 +13,46 @@ public class WordleAgent {
         driver.get(website);
         // wait for page to load
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        // Change browser window size
+        Dimension d = new Dimension(500, 700);
+        driver.manage().window().setSize(d);
         // close pop-up
         driver.findElement(By.className("game-icon")).click();
     }
 
     public void enterGuess(String guess, int row) {
-        String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[1]/div[%d]/div", row);
-        WebElement e = driver.findElement(By.xpath(xPath));
-        // Make guess
-        e.sendKeys(guess);
-        // Press enter
-        e.sendKeys(Keys.RETURN);
+        try {
+            sleep(1000);
+            String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[1]/div[%d]/div", row);
+            if (row == 6)
+                xPath = "//*[@id=\"wordle-app-game\"]/div[1]/div/div[6]/div[1]";
+
+            WebElement e = driver.findElement(By.xpath(xPath));
+            // Make guess
+            e.sendKeys(guess);
+            // Press enter
+            e.sendKeys(Keys.RETURN);
+            // Sleep for 2 seconds
+            sleep(2000);
+        } catch (Exception e) {
+            System.out.printf("ERROR: getting row #%d%n", row);
+            e.printStackTrace();
+        }
+
     }
 
     public String getFeedback(int row) {
         StringBuilder feedback = new StringBuilder();
         String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[%d]", row);
         WebElement e = driver.findElement(By.xpath(xPath));
-        System.out.printf("RESP.TEXT: %s%n", e.getText());
+
+
         for (int i = 1; i <= 5; i++) {
             String subPath = String.format("%s/div[%d]/div",xPath, i);
-            System.out.println("SUBPATH: " + subPath);
             WebElement letter = e.findElement(By.xpath(subPath));
             // Get value of `data-state` attribute
             String stater = letter.getAttribute("aria-label");
-            System.out.println("ARIA-LABEL: " + stater);
+            System.out.printf("FEEDBACK_REC: %s%n", stater);
             String[] state = stater.split(" ");
             switch (state[1]) {
                 // Correct
@@ -56,6 +68,14 @@ public class WordleAgent {
 
     public void close() {
         driver.close();
+    }
+
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }
