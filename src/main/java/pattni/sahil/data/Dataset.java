@@ -46,4 +46,22 @@ public class Dataset {
     public void removeWord(String word) {
         wordFrequencyList.removeIf(entry -> entry.word.equals(word));
     }
+
+    public boolean isEmpty() {
+        return wordFrequencyList.size() == 0;
+    }
+
+    public void regexFilter(String regex) {
+        wordFrequencyList.removeIf(entry -> !entry.word.matches(regex));
+    }
+
+    public int size() {
+        return wordFrequencyList.size();
+    }
+
+    public String nextWord() {
+        if (isEmpty())
+            throw new RuntimeException("Dataset is empty");
+        return wordFrequencyList.remove(0).word;
+    }
 }
