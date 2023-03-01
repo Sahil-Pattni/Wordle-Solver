@@ -11,6 +11,7 @@ public class WordleApplication {
         try {
             solver = new Solver();
             result = solver.solve();
+
             System.out.println("Solved: " + result);
         } catch (Exception e) {
             e.printStackTrace();

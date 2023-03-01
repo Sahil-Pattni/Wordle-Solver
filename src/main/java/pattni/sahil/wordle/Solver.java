@@ -7,8 +7,6 @@ import pattni.sahil.data.WordEntry;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import static java.lang.Thread.sleep;
-
 public class Solver {
     private final String startWord;
 
@@ -52,11 +50,15 @@ public class Solver {
         boolean solved = step(startWord, 1);
         if (solved) return true;
 
+        // TODO: Handle `not a word` cases
+
         // Subsequent guesses
         for (int i = 2; i <= 6; i++) {
-            System.out.printf("Attempting row %d%n", i);
             solved = step(dataset.nextWord(), i);
-            if (solved) return true;
+            if (solved) {
+                agent.share();
+                return true;
+            }
         }
         return false;
     }
@@ -64,13 +66,6 @@ public class Solver {
     private boolean step(String word, int row) {
         // Make guess
         agent.enterGuess(word, row);
-        if (row == 6) {
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
         // Get feedback
         String feedback = agent.getFeedback(row);
 
@@ -118,12 +113,8 @@ public class Solver {
 
     private void purgeDataset() {
         // Remove words that don't match the correct letters
-        System.out.printf("[BEFORE PURGE] Dataset size: %d%n", dataset.size());
         String correctRegex = buildCorrectRegex();
-        System.out.println(correctRegex);
         dataset.regexFilter(correctRegex);
-
-        System.out.printf("[CORR PURGE] Dataset size: %d%n", dataset.size());
 
         // Remove words that contain incorrect letters
         StringBuilder incorrectRegex = new StringBuilder();
@@ -137,14 +128,9 @@ public class Solver {
         incorrectRegex.append("]{5}\\b");
         dataset.regexFilter(incorrectRegex.toString());
 
-
-        System.out.printf("[INCORR PURGE] Dataset size: %d%n", dataset.size());
-
         // Remove words that don't contain letters in the wrong position
         String wrongPositionRegex = buildWrongPositionRegex();
         dataset.regexFilter(wrongPositionRegex);
-
-        System.out.printf("[WPOS PURGE] Dataset size: %d%n", dataset.size());
 
         if (!dataset.isEmpty()){
             // Copy the dataset
@@ -171,10 +157,6 @@ public class Solver {
                 }
             }
         }
-
-        System.out.printf("[WPOS PURGE 2] Dataset size: %d%n", dataset.size());
-
-        System.out.printf("Final Dataset size: %d%n", dataset.size());
     }
 
     private String buildCorrectRegex() {
