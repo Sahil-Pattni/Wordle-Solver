@@ -47,14 +47,27 @@ public class Solver {
 
     public boolean solve() {
         // First guess
-        boolean solved = step(startWord, 1);
+        boolean solved;
+        try {
+            solved = step(startWord, 1);
+        } catch (IncorrectWordException e) {
+            // `soare` should be accepted
+            throw new RuntimeException(e);
+        }
         if (solved) return true;
 
         // TODO: Handle `not a word` cases
 
         // Subsequent guesses
         for (int i = 2; i <= 6; i++) {
-            solved = step(dataset.nextWord(), i);
+            try {
+                solved = step(dataset.nextWord(), i);
+            } catch (IncorrectWordException e) {
+                // undo guess
+                agent.undoGuess(i);
+                // retry with next word
+                i--;
+            }
             if (solved) {
                 agent.share();
                 return true;
@@ -63,9 +76,14 @@ public class Solver {
         return false;
     }
 
-    private boolean step(String word, int row) {
+    private boolean step(String word, int row) throws IncorrectWordException {
         // Make guess
         agent.enterGuess(word, row);
+
+        // Check if guess is valid
+        if (!agent.isAccepted(row))
+            throw new IncorrectWordException(word);
+
         // Get feedback
         String feedback = agent.getFeedback(row);
 

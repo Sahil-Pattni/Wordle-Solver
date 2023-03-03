@@ -9,10 +9,6 @@ public class WordleAgent {
     // Agent to run Wordle via Selenium
     private final WebDriver driver = new SafariDriver();
 
-    // Keep this >= 1500
-    private final int WAIT_AFTER_GUESS = 2000;
-    private final int INITIAL_WAIT = 500;
-
     public WordleAgent() {
         // Change browser window size
         Dimension d = new Dimension(360, 640);
@@ -28,9 +24,8 @@ public class WordleAgent {
 
     public void enterGuess(String guess, int row) {
         // Wait for page to load
-        if (row == 1) sleep(INITIAL_WAIT);
+        if (row == 1) sleep(500);
 
-        // TODO: Implement a waiter for the feedback to appear
         try {
             String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[1]/div[%d]/div", row);
             if (row == 6)
@@ -42,12 +37,37 @@ public class WordleAgent {
             // Press enter
             e.sendKeys(Keys.RETURN);
             // Sleep for 2 seconds
-            sleep(WAIT_AFTER_GUESS);
+            // Keep this >= 1500
+            sleep(2000);
         } catch (Exception e) {
             System.out.printf("ERROR: getting row #%d%n", row);
             e.printStackTrace();
         }
+    }
 
+    public boolean isAccepted(int row) {
+        String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[%d]/div[1]/div", row);
+        WebElement e = driver.findElement(By.xpath(xPath));
+
+        // Get value of `data-state` attribute
+        String stater = e.getAttribute("data-state");
+        return !stater.equals("tbd");
+    }
+
+    public void undoGuess(int row) {
+        try {
+            String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[1]/div[%d]/div", row);
+            if (row == 6)
+                xPath = "//*[@id=\"wordle-app-game\"]/div[1]/div/div[6]/div[1]";
+
+            WebElement e = driver.findElement(By.xpath(xPath));
+            // Press backspace 5 times
+            for (int i = 0; i < 5; i++)
+                e.sendKeys(Keys.BACK_SPACE);
+        } catch (Exception e) {
+            System.out.printf("ERROR: getting row #%d%n", row);
+            e.printStackTrace();
+        }
     }
 
     public String getFeedback(int row) {
