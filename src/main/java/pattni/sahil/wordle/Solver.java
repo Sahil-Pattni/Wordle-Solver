@@ -148,7 +148,8 @@ public class Solver {
 
         // Remove words that don't contain letters in the wrong position
         String wrongPositionRegex = buildWrongPositionRegex();
-        dataset.regexFilter(wrongPositionRegex);
+        if (wrongPositionRegex != null)
+            dataset.regexFilter(wrongPositionRegex);
 
         if (!dataset.isEmpty()){
             // Copy the dataset
@@ -193,7 +194,7 @@ public class Solver {
         for (char letter : wrongPosition.keySet())
             letters.append(letter);
 
-        return String.format("\\b(?=[a-z]*[%s])[a-z]{5}\\b", letters);
+        return letters.length() > 0 ? String.format("\\b(?=[a-z]*[%s])[a-z]{5}\\b", letters) : null;
     }
 
     public void close() {

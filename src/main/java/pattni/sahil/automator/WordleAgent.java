@@ -97,8 +97,10 @@ public class WordleAgent {
     public void share() {
         // Clicks on the share button
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        // Find element `AuthCTA-module_shareButton__XXXXX` where XXXXX is a random string
         WebElement shareButton = wait.until(
-                d -> d.findElement(By.className("AuthCTA-module_shareButton__b8fO9"))
+                d -> d.findElement(By.cssSelector("button[class*='AuthCTA-module_shareButton__']"))
+
         );
         System.out.println("Share button found");
         shareButton.click();
