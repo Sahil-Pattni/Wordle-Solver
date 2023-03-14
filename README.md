@@ -18,7 +18,7 @@ Currently, the program only supports Safari browser,
 - From the project root, run `mvn clean install spring-boot:repackage` to build the jar file.
 - If the safari webdriver is not enabled, run `safaridriver --enable` to enable it.
 
-- Run `java -jar target/wordle-0.0.1-SNAPSHOT.jar` to start the program.
+- Run `java -jar target/0.0.2-SNAPSHOT.jar` to start the program.
 
 
 ### Acknowledgements
