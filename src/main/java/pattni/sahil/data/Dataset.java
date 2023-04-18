@@ -4,16 +4,25 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-// Main class to store dataset sorted by frequency
 public class Dataset {
-    ArrayList<WordEntry> wordFrequencyList;
+    /*
+     * The dataset of words and their frequencies.
+     */
+    List<WordEntry> wordFrequencyList;
+
     public Dataset(String filepath) {
         wordFrequencyList = new ArrayList<>();
         populateDataset(filepath);
     }
 
     private void populateDataset(String filepath) {
+        /*
+         * Populate the dataset from a CSV file.
+         *
+         * @param filepath: The path to the CSV file.
+         */
         // Read CSV and populate wordFrequencyList
         try {
             BufferedReader br = new BufferedReader(new FileReader(filepath));
@@ -39,23 +48,32 @@ public class Dataset {
         wordFrequencyList.sort((a, b) -> b.frequency - a.frequency);
     }
 
-    public ArrayList<WordEntry> getWordFrequencyList() {
+    public List<WordEntry> getWordFrequencyList() {
         return wordFrequencyList;
     }
 
     public void removeWord(String word) {
+        /* Remove a word from the dataset. */
         wordFrequencyList.removeIf(entry -> entry.word.equals(word));
     }
 
     public boolean isEmpty() {
+        /* Return true if the dataset is empty. */
         return wordFrequencyList.size() == 0;
     }
 
     public void regexFilter(String regex) {
+        /*
+         * Remove all words that do not match the regex.
+         * This is used to filter out words that are not in the dictionary.
+         *
+         * @param regex: The regex to filter the words with.
+         */
         wordFrequencyList.removeIf(entry -> !entry.word.matches(regex));
     }
 
     public int size() {
+        /* Return the number of remaining words in the dataset. */
         return wordFrequencyList.size();
     }
 

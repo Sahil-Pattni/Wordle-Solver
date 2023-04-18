@@ -6,17 +6,23 @@ import pattni.sahil.data.WordEntry;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 public class Solver {
+    /*
+     * This is the main class that solves the Wordle game.
+     * Holds the dataset and the Selenium agent.
+     */
     private final String startWord;
 
-    // Correctly guessed letters
-    Hashtable<Integer, Character> correct;
+    // Correctly guessed letters <index, letter>
+    Map<Integer, Character> correct;
     // Letters that are not in the word
-    ArrayList<Character> incorrect;
+    List<Character> incorrect;
     // Letters that are in the word but in the wrong position
     // Key is the letter, value is an array of positions they are not in
-    Hashtable<Character, ArrayList<Integer>> wrongPosition;
+    Map<Character, ArrayList<Integer>> wrongPosition;
 
     // Dataset
     Dataset dataset;
@@ -28,9 +34,11 @@ public class Solver {
 
         // Initialize data structures
         dataset = new Dataset(datasetPath);
+
         // Remove start word from dataset (if exists)
         dataset.removeWord(startWord);
 
+        // Initialize data structures
         correct = new Hashtable<>();
         incorrect = new ArrayList<>();
         wrongPosition = new Hashtable<>();
@@ -46,6 +54,9 @@ public class Solver {
 
 
     public boolean solve() {
+        /*
+         * Solve the Wordle game. Make guesses and process feedback.
+         */
         // First guess
         boolean solved;
         try {
@@ -77,6 +88,14 @@ public class Solver {
     }
 
     private boolean step(String word, int row) throws IncorrectWordException {
+        /*
+         * Make a guess and process the feedback.
+         *
+         * @param word The word to guess
+         * @param row The row to enter the guess in
+         *
+         * @return True if the word was guessed correctly, false otherwise.
+         */
         // Make guess
         agent.enterGuess(word, row);
 
@@ -105,6 +124,9 @@ public class Solver {
          *   - `0` for incorrect
          *   - `?` for wrong position
          *
+         * @param feedback The user's feedback
+         * @param word The word that was guessed
+         *
          * @return The user's feedback
          */
 
@@ -130,11 +152,16 @@ public class Solver {
     }
 
     private void purgeDataset() {
-        // Remove words that don't match the correct letters
+        /*
+         * Removes all words from the dataset that cannot
+         * be used, based on the game's feedback.
+         */
+
+        // --- STEP 1: Remove words that don't match the correct letters --- //
         String correctRegex = buildCorrectRegex();
         dataset.regexFilter(correctRegex);
 
-        // Remove words that contain incorrect letters
+        // --- STEP 2: Remove words that contain incorrect letters --- //
         StringBuilder incorrectRegex = new StringBuilder();
         // builds: `\b[^xyz\s\d]{5}\b` where x,y,z,etc. are the incorrect letters
         incorrectRegex.append("\\b[^");
@@ -146,7 +173,7 @@ public class Solver {
         incorrectRegex.append("]{5}\\b");
         dataset.regexFilter(incorrectRegex.toString());
 
-        // Remove words that don't contain letters in the wrong position
+        // --- STEP 3: Remove words that contain letters in the wrong position --- //
         String wrongPositionRegex = buildWrongPositionRegex();
         if (wrongPositionRegex != null)
             dataset.regexFilter(wrongPositionRegex);
@@ -179,7 +206,9 @@ public class Solver {
     }
 
     private String buildCorrectRegex() {
-        // Build regex for correct letters
+        /*
+         * Builds a regex that matches all words that contain the correct letters.
+         */
         StringBuilder regex = new StringBuilder();
         for (int i = 0; i < 5; i++) {
             String letter = correct.get(i) == null ? "[a-z]" : String.valueOf(correct.get(i));
@@ -189,6 +218,10 @@ public class Solver {
     }
 
     private String buildWrongPositionRegex() {
+        /*
+         * Builds a regex that matches all words that contain the letters
+         * that are in the wrong position.
+         */
         // String of all the letters that are in the wrong position
         StringBuilder letters = new StringBuilder();
         for (char letter : wrongPosition.keySet())

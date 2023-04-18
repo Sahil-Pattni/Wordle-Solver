@@ -6,7 +6,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class WordleAgent {
-    // Agent to run Wordle via Selenium
+    /*
+     * The agent is responsible for interacting with the Wordle website.
+     */
     private final WebDriver driver = new SafariDriver();
 
     public WordleAgent() {
@@ -14,20 +16,30 @@ public class WordleAgent {
         Dimension d = new Dimension(360, 640);
         driver.manage().window().setSize(d);
 
+
         String website = "https://www.nytimes.com/games/wordle/index.html";
         driver.get(website);
+
         // wait for page to load
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
-        // close pop-up
+        // close initial pop-up
         driver.findElement(By.className("game-icon")).click();
     }
 
     public void enterGuess(String guess, int row) {
+        /*
+         * Enter a guess into the row.
+         *
+         * @param guess The guess to enter
+         * @param row The row to enter the guess into
+         */
         // Wait for page to load
         if (row == 1) sleep(500);
 
         try {
+            // Get row element
             String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[1]/div[%d]/div", row);
+            // Special case for row 6
             if (row == 6)
                 xPath = "//*[@id=\"wordle-app-game\"]/div[1]/div/div[6]/div[1]";
 
@@ -46,6 +58,14 @@ public class WordleAgent {
     }
 
     public boolean isAccepted(int row) {
+        /*
+         * Check if the guess in the row is accepted by the website.
+         *
+         * @param row The row to check
+         *
+         * @return True if the guess is accepted, false otherwise
+         */
+        // Get row element
         String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[%d]/div[1]/div", row);
         WebElement e = driver.findElement(By.xpath(xPath));
 
@@ -55,8 +75,15 @@ public class WordleAgent {
     }
 
     public void undoGuess(int row) {
+        /*
+         * Undo the guess in the row by pressing backspace 5 times.
+         *
+         * @param row The row to undo the guess in
+         */
         try {
+            // Get row element
             String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[1]/div[%d]/div", row);
+            // Special case for row 6
             if (row == 6)
                 xPath = "//*[@id=\"wordle-app-game\"]/div[1]/div/div[6]/div[1]";
 
@@ -71,11 +98,22 @@ public class WordleAgent {
     }
 
     public String getFeedback(int row) {
+        /*
+         * Gets the feedback for the guess in the row.
+         *
+         * @param row The row to get the feedback for
+         *
+         * @return A string of 5 characters, where 1 means correct,
+         *  0 means wrong, and ? means wrong position.
+         */
+
+        // Get row element
         StringBuilder feedback = new StringBuilder();
         String xPath = String.format("//*[@id=\"wordle-app-game\"]/div[1]/div/div[%d]", row);
         WebElement e = driver.findElement(By.xpath(xPath));
 
 
+        // Parse feedback
         for (int i = 1; i <= 5; i++) {
             String subPath = String.format("%s/div[%d]/div",xPath, i);
             WebElement letter = e.findElement(By.xpath(subPath));
@@ -95,6 +133,10 @@ public class WordleAgent {
     }
 
     public void share() {
+        /*
+         * Clicks on the share button to
+         * copy the result to the clipboard.
+         */
         // Clicks on the share button
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         // Find element `AuthCTA-module_shareButton__XXXXX` where XXXXX is a random string

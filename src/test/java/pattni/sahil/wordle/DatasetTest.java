@@ -4,7 +4,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pattni.sahil.data.Dataset;
 import pattni.sahil.data.WordEntry;
 
-import java.util.ArrayList;
+import java.util.List;
 
 // Test Imports
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,13 +21,13 @@ public class DatasetTest {
 
     @Test
     public void testDatasetImport() {
-        ArrayList<WordEntry> a = dataset.getWordFrequencyList();
+        List<WordEntry> a = dataset.getWordFrequencyList();
         assertEquals(39933, a.size());
     }
 
     @Test
     public void testSort() {
-        ArrayList<WordEntry> a = dataset.getWordFrequencyList();
+        List<WordEntry> a = dataset.getWordFrequencyList();
 
         int prev = Integer.MAX_VALUE;
         for (WordEntry entry : a) {
@@ -40,7 +40,7 @@ public class DatasetTest {
     @Test
     public void testRemove() {
         dataset.removeWord("money");
-        ArrayList<WordEntry> a = dataset.getWordFrequencyList();
+        List<WordEntry> a = dataset.getWordFrequencyList();
         assertEquals(39932, a.size());
 
         for (WordEntry entry : a) {
