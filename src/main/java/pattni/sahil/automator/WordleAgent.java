@@ -5,7 +5,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class WordleAgent {
+public class WordleAgent implements Agent {
     /*
      * The agent is responsible for interacting with the Wordle website.
      */
@@ -22,10 +22,29 @@ public class WordleAgent {
 
         // wait for page to load
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
+        // Accept cookies
+        acceptCookies();
         // close initial pop-up
         driver.findElement(By.className("game-icon")).click();
     }
 
+    public void acceptCookies() {
+        /*
+         * Accept cookies on the website.
+         */
+        // Wait for page to load
+        sleep(500);
+        // Accept cookies (button with id "pz-gdpr-btn-accept") if it exists
+        try {
+            driver.findElement(By.id("pz-gdpr-btn-accept")).click();
+        } catch (NoSuchElementException e) {
+            // Do nothing
+        }
+        sleep(500);
+    }
+
+
+    @Override
     public void enterGuess(String guess, int row) {
         /*
          * Enter a guess into the row.
@@ -57,6 +76,7 @@ public class WordleAgent {
         }
     }
 
+    @Override
     public boolean isAccepted(int row) {
         /*
          * Check if the guess in the row is accepted by the website.
@@ -74,6 +94,7 @@ public class WordleAgent {
         return !stater.equals("tbd");
     }
 
+    @Override
     public void undoGuess(int row) {
         /*
          * Undo the guess in the row by pressing backspace 5 times.
@@ -97,6 +118,7 @@ public class WordleAgent {
         }
     }
 
+    @Override
     public String getFeedback(int row) {
         /*
          * Gets the feedback for the guess in the row.
@@ -132,6 +154,7 @@ public class WordleAgent {
         return feedback.toString();
     }
 
+    @Override
     public void share() {
         /*
          * Clicks on the share button to
@@ -148,6 +171,7 @@ public class WordleAgent {
         shareButton.click();
     }
 
+    @Override
     public void close() {
         driver.close();
     }
