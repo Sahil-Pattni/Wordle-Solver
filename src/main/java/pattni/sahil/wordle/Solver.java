@@ -1,5 +1,6 @@
 package pattni.sahil.wordle;
 
+import pattni.sahil.automator.Agent;
 import pattni.sahil.automator.WordleAgent;
 import pattni.sahil.data.Dataset;
 import pattni.sahil.data.WordEntry;
@@ -27,9 +28,9 @@ public class Solver {
     // Dataset
     Dataset dataset;
     // Selenium agent
-    WordleAgent agent;
+    Agent agent;
 
-    public Solver(String startWord, String datasetPath) {
+    public Solver(String startWord, String datasetPath, Agent agent) {
         this.startWord = startWord;
 
         // Initialize data structures
@@ -44,16 +45,16 @@ public class Solver {
         wrongPosition = new Hashtable<>();
 
         // Initialize Selenium agent
-        agent = new WordleAgent();
+        this.agent = agent;
     }
 
     public Solver() {
         // Default start word is "soare"
-        this("soare", "lib/unigram_freq.csv");
+        this("soare", "lib/unigram_freq.csv", new WordleAgent());
     }
 
 
-    public boolean solve() {
+    public int solve() {
         /*
          * Solve the Wordle game. Make guesses and process feedback.
          */
@@ -65,7 +66,7 @@ public class Solver {
             // `soare` should be accepted
             throw new RuntimeException(e);
         }
-        if (solved) return true;
+        if (solved) return 1;
 
         // TODO: Handle `not a word` cases
 
@@ -81,10 +82,10 @@ public class Solver {
             }
             if (solved) {
                 agent.share();
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
     private boolean step(String word, int row) throws IncorrectWordException {
@@ -211,6 +212,7 @@ public class Solver {
          */
         StringBuilder regex = new StringBuilder();
         for (int i = 0; i < 5; i++) {
+            // Add the correct letter for the current position, or any letter if it's not known
             String letter = correct.get(i) == null ? "[a-z]" : String.valueOf(correct.get(i));
             regex.append(letter);
         }

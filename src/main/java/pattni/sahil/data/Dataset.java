@@ -10,7 +10,7 @@ public class Dataset {
     /*
      * The dataset of words and their frequencies.
      */
-    List<WordEntry> wordFrequencyList;
+    private List<WordEntry> wordFrequencyList;
 
     public Dataset(String filepath) {
         wordFrequencyList = new ArrayList<>();
@@ -81,5 +81,11 @@ public class Dataset {
         if (isEmpty())
             throw new RuntimeException("Dataset is empty");
         return wordFrequencyList.remove(0).word;
+    }
+
+    public String randomWord() {
+        if (isEmpty())
+            throw new RuntimeException("Dataset is empty");
+        return wordFrequencyList.remove((int) (Math.random() * wordFrequencyList.size())).getWord();
     }
 }

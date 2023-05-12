@@ -7,7 +7,7 @@ public class WordleApplication {
 
     public static void main(String[] args) {
         Solver solver = null;
-        boolean result = false;
+        int result = -1;
         try {
             solver = new Solver();
             result = solver.solve();
@@ -16,7 +16,7 @@ public class WordleApplication {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (solver != null && !result)
+            if (solver != null && (result == -1 || result == 0))
                 solver.close();
         }
     }
