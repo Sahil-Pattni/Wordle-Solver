@@ -24,6 +24,8 @@ public class WordleAgent implements Agent {
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
         // Accept cookies
         acceptCookies();
+        // Click play button
+        driver.findElement(By.className("Welcome-module_button__ZG0Zh")).click();
         // close initial pop-up
         driver.findElement(By.className("game-icon")).click();
     }
